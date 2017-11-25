@@ -17,5 +17,15 @@ RUN cd nova && \
     git cherry-pick FETCH_HEAD && \
     # get rid of a symlink which can lead to errors, see:
     # https://github.com/python/cpython/pull/4267
-    find . -type l -exec rm {} \; && \
+    find . -type l -exec rm {} \;
+RUN cd nova && \
     pip3 install .
+RUN cd nova && \
+    pip3 install PyMySQL
+
+# keystone middleware doesn't see configuration path changes
+RUN ln -s /shared/etc/nova /etc/nova
+
+VOLUME /shared
+
+ENTRYPOINT ["uwsgi", "--ini", "/shared/placement-uwsgi.ini"]

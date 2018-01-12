@@ -11,20 +11,16 @@ RUN apk add --no-cache py3-paramiko py3-greenlet py3-netifaces py3-libxml2 py3-l
 RUN git config --global user.email "cdent@anticdent.org" && \
     git config --global user.name "Chris Dent"
 
-RUN git clone --depth=2 https://git.openstack.org/openstack/nova
-RUN cd nova && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/66/362766/48 && \
+# Do this all in one big piece otherwise the nova bits are out of date
+RUN git clone --depth=2 https://git.openstack.org/openstack/nova && \
+    cd nova && \
+    git fetch https://git.openstack.org/openstack/nova refs/changes/66/362766/55 && \
     git cherry-pick FETCH_HEAD && \
     # get rid of a symlink which can lead to errors, see:
     # https://github.com/python/cpython/pull/4267
-    find . -type l -exec rm {} \;
-RUN cd nova && \
-    pip3 install .
-RUN cd nova && \
-    pip3 install PyMySQL
-
-# keystone middleware doesn't see configuration path changes
-RUN ln -s /shared/etc/nova /etc/nova
+    find . -type l -exec rm {} \; && \
+    pip3 install . && \
+    pip3 install PyMySQL python-memcached
 
 VOLUME /shared
 

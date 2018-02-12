@@ -4,7 +4,12 @@ MAINTAINER Chris Dent <cdent@anticdent.org>
 RUN apk add --no-cache python3 python3-dev py3-pip git gcc uwsgi-python3
 # the following are not directly used by placement but are needed by
 # "accidental" imports
-RUN apk add --no-cache py3-netifaces py3-greenlet py-cryptography py3-libxml2 py3-lxml
+# Used by:
+# netifaces: oslo_utils
+# greenlet: oslo_service (which is really only used for managing debug options)
+# cryptopgraphy: castellan, coming in via nova.conf
+RUN apk add --no-cache py3-netifaces py3-greenlet py-cryptography
+#RUN apk add --no-cache py3-netifaces py3-greenlet py-cryptography py3-libxml2 py3-lxml
 
 # Work around git wanting to know
 RUN git config --global user.email "cdent@anticdent.org" && \

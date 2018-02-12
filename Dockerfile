@@ -17,11 +17,14 @@ RUN pip3 install -r placement-requirements.txt
 # Do this all in one big piece otherwise the nova bits are out of date
 RUN git clone --depth=2 https://git.openstack.org/openstack/nova && \
     cd nova && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/49/540049/3 && git cherry-pick FETCH_HEAD &&\
-    git fetch https://git.openstack.org/openstack/nova refs/changes/66/362766/59 && git cherry-pick FETCH_HEAD && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/35/541435/1 && git cherry-pick FETCH_HEAD && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/52/533752/5 && git cherry-pick FETCH_HEAD && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/97/533797/8 && git cherry-pick FETCH_HEAD && \
+    git fetch https://git.openstack.org/openstack/nova refs/changes/49/540049/5 && git cherry-pick FETCH_HEAD &&\
+    git fetch https://git.openstack.org/openstack/nova refs/changes/66/362766/61 && git cherry-pick FETCH_HEAD && \
+    git fetch https://git.openstack.org/openstack/nova refs/changes/35/541435/3 && git cherry-pick FETCH_HEAD && \
+    git fetch https://git.openstack.org/openstack/nova refs/changes/95/543495/1 && git cherry-pick FETCH_HEAD && \
+    git fetch https://git.openstack.org/openstack/nova refs/changes/52/533752/6 && git cherry-pick FETCH_HEAD && \
+    git fetch https://git.openstack.org/openstack/nova refs/changes/97/533797/9 && git cherry-pick FETCH_HEAD && \
+    git fetch https://git.openstack.org/openstack/nova refs/changes/62/543262/2 && git cherry-pick FETCH_HEAD && \
+    git fetch https://git.openstack.org/openstack/nova refs/changes/69/543469/1 && git cherry-pick FETCH_HEAD && \
     # get rid of a symlink which can lead to errors, see:
     # https://github.com/python/cpython/pull/4267
     find . -type l -exec rm {} \; && \

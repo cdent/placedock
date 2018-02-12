@@ -21,7 +21,3 @@ python-memcached
 
 # importing nova conf import key_manager which needs
 castellan>=0.16.0 # Apache-2.0
-
-# nova/db/__init__.py import all of db which gets cells_rpc
-cursive>=0.2.1 # Apache-2.0
-os-service-types>=1.1.0 # Apache-2.0

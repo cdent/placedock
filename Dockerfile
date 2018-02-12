@@ -9,7 +9,6 @@ RUN apk add --no-cache python3 python3-dev py3-pip git gcc uwsgi-python3
 # greenlet: oslo_service (which is really only used for managing debug options)
 # cryptopgraphy: castellan, coming in via nova.conf
 RUN apk add --no-cache py3-netifaces py3-greenlet py-cryptography
-#RUN apk add --no-cache py3-netifaces py3-greenlet py-cryptography py3-libxml2 py3-lxml
 
 # Work around git wanting to know
 RUN git config --global user.email "cdent@anticdent.org" && \
@@ -20,16 +19,17 @@ ADD placement-requirements.txt /
 RUN pip3 install -r placement-requirements.txt
 
 # Do this all in one big piece otherwise the nova bits are out of date
-RUN git clone --depth=2 https://git.openstack.org/openstack/nova && \
+RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
     cd nova && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/49/540049/5 && git cherry-pick FETCH_HEAD &&\
-    git fetch https://git.openstack.org/openstack/nova refs/changes/66/362766/61 && git cherry-pick FETCH_HEAD && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/35/541435/3 && git cherry-pick FETCH_HEAD && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/95/543495/1 && git cherry-pick FETCH_HEAD && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/52/533752/6 && git cherry-pick FETCH_HEAD && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/97/533797/9 && git cherry-pick FETCH_HEAD && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/62/543262/2 && git cherry-pick FETCH_HEAD && \
-    git fetch https://git.openstack.org/openstack/nova refs/changes/69/543469/1 && git cherry-pick FETCH_HEAD && \
+    # This seems redundant and weird. Probably a better way?
+    git fetch origin refs/changes/49/540049/6 && git cherry-pick FETCH_HEAD &&\
+    git fetch origin refs/changes/66/362766/62 && git cherry-pick FETCH_HEAD && \
+    git fetch origin refs/changes/35/541435/4 && git cherry-pick FETCH_HEAD && \
+    git fetch origin refs/changes/95/543495/2 && git cherry-pick FETCH_HEAD && \
+    git fetch origin refs/changes/52/533752/6 && git cherry-pick FETCH_HEAD && \
+    git fetch origin refs/changes/97/533797/9 && git cherry-pick FETCH_HEAD && \
+    git fetch origin refs/changes/62/543262/2 && git cherry-pick FETCH_HEAD && \
+    git fetch origin refs/changes/69/543469/1 && git cherry-pick FETCH_HEAD && \
     # get rid of a symlink which can lead to errors, see:
     # https://github.com/python/cpython/pull/4267
     find . -type l -exec rm {} \; && \

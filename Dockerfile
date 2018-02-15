@@ -22,14 +22,15 @@ RUN pip3 install -r placement-requirements.txt
 # Thanks to ingy for figuring out a faster way to do this.
 RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
     cd nova && \
-    git fetch --depth=2 --append origin refs/changes/49/540049/6 \
-        refs/changes/66/362766/62 \
-        refs/changes/35/541435/4 \
-        refs/changes/95/543495/2 \
+    git fetch --depth=2 --append origin \
+        refs/changes/49/540049/7 \
+        refs/changes/66/362766/63 \
+        refs/changes/35/541435/5 \
+        refs/changes/95/543495/3 \
         refs/changes/52/533752/6 \
         refs/changes/97/533797/9 \
         refs/changes/62/543262/2 \
-        refs/changes/69/543469/1 && \
+        refs/changes/69/543469/2 && \
     git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     # get rid of a symlink which can lead to errors, see:
     # https://github.com/python/cpython/pull/4267

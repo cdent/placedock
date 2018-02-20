@@ -29,8 +29,8 @@ RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
         refs/changes/95/543495/3 \
         refs/changes/52/533752/6 \
         refs/changes/97/533797/9 \
-        refs/changes/62/543262/2 \
-        refs/changes/69/543469/2 && \
+        refs/changes/62/543262/3 \
+        refs/changes/69/543469/3 && \
     git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     # get rid of a symlink which can lead to errors, see:
     # https://github.com/python/cpython/pull/4267

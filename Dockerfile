@@ -23,10 +23,12 @@ RUN pip3 install -r placement-requirements.txt
 RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
     cd nova && \
     git fetch --depth=2 --append origin \
-        refs/changes/49/540049/11 \
-        refs/changes/66/362766/67 \
-        refs/changes/35/541435/9 \
-        refs/changes/62/549862/3 \
+        refs/changes/49/540049/15 \
+        refs/changes/28/551528/4 \
+        refs/changes/29/551529/4 \
+        refs/changes/66/362766/71 \
+        refs/changes/35/541435/13 \
+        refs/changes/62/549862/7 \
         refs/changes/62/543262/5 && \
     git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     # get rid of a symlink which can lead to errors, see:

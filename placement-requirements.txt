@@ -19,9 +19,5 @@ keystonemiddleware>=4.17.0 # Apache-2.0
 PyMySQL>=0.7.6 # MIT License
 python-memcached
 
-# migrations require
-os-service-types
-cursive
-
 # importing nova conf import key_manager which needs
 castellan>=0.16.0 # Apache-2.0

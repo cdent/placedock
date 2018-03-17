@@ -20,26 +20,27 @@ RUN pip3 install -r placement-requirements.txt
 
 # Do this all in one big piece otherwise the nova bits are out of date
 # Thanks to ingy for figuring out a faster way to do this.
+# We must get rid of a symlink which can lead to errors, see:
+# https://github.com/python/cpython/pull/4267
 RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
     cd nova && \
     git fetch --depth=2 --append origin \
-        refs/changes/62/549862/11 \
-        refs/changes/66/362766/75 \
-        refs/changes/35/541435/17 \
+        refs/changes/62/549862/14 \
+        refs/changes/66/362766/79 \
+        refs/changes/35/541435/21 \
+        refs/changes/57/553857/2 \
         refs/changes/62/543262/7 && \
     git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
-    # get rid of a symlink which can lead to errors, see:
-    # https://github.com/python/cpython/pull/4267
     find . -type l -exec rm {} \; && \
     pip3 install --no-deps .
 
 
-
 # create the placement db
 ADD sync.py /
-ADD /shared/etc/nova/nova.conf /
-RUN python3 sync.py --config-file nova.conf
+ADD /shared/placement-uwsgi.ini /
+RUN mkdir /etc/nova
+ADD /shared/etc/nova/nova.conf /etc/nova
+RUN python3 sync.py --config-file /etc/nova/nova.conf
 
-# Mount nova config and uwsgi config
-VOLUME /shared
-ENTRYPOINT ["uwsgi", "--ini", "/shared/placement-uwsgi.ini"]
+CMD ["/usr/sbin/uwsgi", "--ini", "/placement-uwsgi.ini"]
+EXPOSE 80

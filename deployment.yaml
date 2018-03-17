@@ -1,0 +1,19 @@
+apiVersion: apps/v1  # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+    name: placement-deployment
+spec:
+    selector:
+        matchLabels:
+            app: placement
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: placement
+        spec:
+            containers:
+                - name: placement
+                  image: placedock:1.0
+                  ports:
+                  - containerPort: 80

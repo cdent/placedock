@@ -6,6 +6,11 @@ spec:
     selector:
         matchLabels:
             app: placement
+# With the default sqlite database only one replica can be run
+# (if you want consistent data). You can change the database
+# below to a postgresql database external to the container.
+# Or if you add support for client drivers to the container,
+# any database you like that is supported by SQLAlchemy.
     replicas: 1
     template:
         metadata:
@@ -20,6 +25,6 @@ spec:
 # sqlite3 database within the container.
 #                   env:
 #                       - name: DB_STRING
-#                         value: "fail badly"
+#                         value: postgresql+psycopg2://foo:bar@192.168.1.1/placement?client_encoding=utf8
                   ports:
                   - containerPort: 80

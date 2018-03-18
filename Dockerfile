@@ -1,7 +1,7 @@
 FROM    alpine:edge
 MAINTAINER Chris Dent <cdent@anticdent.org>
 
-RUN apk add --no-cache python3 python3-dev py3-pip git gcc uwsgi-python3
+RUN apk add --no-cache python3 python3-dev py3-pip git gcc uwsgi-python3 py3-psycopg2
 # the following are not directly used by placement but are needed by
 # "accidental" imports
 # Used by:

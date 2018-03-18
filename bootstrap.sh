@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 eval `minikube docker-env`
 docker build -t placedock:1.0 .

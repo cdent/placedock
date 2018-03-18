@@ -1,30 +1,30 @@
 apiVersion: apps/v1  # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-    name: placement-deployment
+  name: placement-deployment
 spec:
-    selector:
-        matchLabels:
-            app: placement
+  selector:
+    matchLabels:
+      app: placement
 # With the default sqlite database only one replica can be run
 # (if you want consistent data). You can change the database
 # below to a postgresql database external to the container.
 # Or if you add support for client drivers to the container,
 # any database you like that is supported by SQLAlchemy.
-    replicas: 1
-    template:
-        metadata:
-            labels:
-                app: placement
-        spec:
-            containers:
-                - name: placement
-                  image: placedock:1.0
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: placement
+    spec:
+      containers:
+      - name: placement
+        image: placedock:1.0
 # Change this value if you want to use a different database connection
 # string for the placement database. Otherwise it will default to a
 # sqlite3 database within the container.
-#                   env:
-#                       - name: DB_STRING
-#                         value: postgresql+psycopg2://foo:bar@192.168.1.1/placement?client_encoding=utf8
-                  ports:
-                  - containerPort: 80
+#        env:
+#        - name: DB_STRING
+#          value: postgresql+psycopg2://foo:bar@192.168.1.1/placement?client_encoding=utf8
+        ports:
+        - containerPort: 80

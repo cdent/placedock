@@ -9,6 +9,4 @@ PLACEMENT=`minikube service placement-deployment --url`
 curl -H 'x-auth-token: admin' $PLACEMENT 
 echo
 
-if `which -s gabbi-run`; then
-    gabbi-run -v all $PLACEMENT -- gabbi.yaml
-fi
+type gabbi-run && gabbi-run -v all $PLACEMENT -- gabbi.yaml

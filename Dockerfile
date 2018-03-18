@@ -35,12 +35,19 @@ RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
     pip3 install --no-deps .
 
 
-# create the placement db
-ADD sync.py /
-ADD /shared/placement-uwsgi.ini /
+# add the nova.conf template
 RUN mkdir /etc/nova
-ADD /shared/etc/nova/nova.conf /etc/nova
-RUN python3 sync.py --config-file /etc/nova/nova.conf
+ADD /shared/etc/nova/nova.conf /etc/nova/nova.conf.tmp
 
-CMD ["/usr/sbin/uwsgi", "--ini", "/placement-uwsgi.ini"]
+# add the tools for creating the placement db
+ADD sync.py /
+
+# add in the uwsgi configuration
+ADD /shared/placement-uwsgi.ini /
+
+# copy in the startup script, which syncs the database and
+# starts uwsgi.
+ADD startup.sh /
+
+CMD ["sh", "-c", "/startup.sh"]
 EXPOSE 80

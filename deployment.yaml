@@ -15,5 +15,11 @@ spec:
             containers:
                 - name: placement
                   image: placedock:1.0
+# Change this value if you want to use a different database connection
+# string for the placement database. Otherwise it will default to a
+# sqlite3 database within the container.
+#                   env:
+#                       - name: DB_STRING
+#                         value: "fail badly"
                   ports:
                   - containerPort: 80

@@ -1,7 +1,7 @@
 import os
 import sys
 
-from migration import exceptions
+from migrate import exceptions
 from migrate.versioning import api as versioning_api
 from migrate.versioning.repository import Repository
 

@@ -31,4 +31,5 @@ spec:
         # We must set resources for scaling to work.
         resources:
           requests:
-            cpu: 1000m
+            # the docker machine is small, so don't consume too much of it
+            cpu: 250m

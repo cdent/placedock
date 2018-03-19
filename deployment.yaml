@@ -11,7 +11,7 @@ spec:
 # below to a postgresql database external to the container.
 # Or if you add support for client drivers to the container,
 # any database you like that is supported by SQLAlchemy.
-  replicas: 1
+#  replicas: 1
   template:
     metadata:
       labels:
@@ -23,8 +23,12 @@ spec:
 # Change this value if you want to use a different database connection
 # string for the placement database. Otherwise it will default to a
 # sqlite3 database within the container.
-#        env:
-#        - name: DB_STRING
-#          value: postgresql+psycopg2://foo:bar@192.168.1.1/placement?client_encoding=utf8
+        env:
+        - name: DB_STRING
+          value: postgresql+psycopg2://cdent@192.168.1.76/placement?client_encoding=utf8
         ports:
         - containerPort: 80
+        # We must set resources for scaling to work.
+        resources:
+          requests:
+            cpu: 1000m

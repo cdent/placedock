@@ -1,6 +1,7 @@
 import os
 import sys
 
+from migration import exceptions
 from migrate.versioning import api as versioning_api
 from migrate.versioning.repository import Repository
 
@@ -25,9 +26,12 @@ def _migration():
         stopper.write('def upgrade(x): pass\n')
     repository = Repository(path)
     placement_engine = db_api.get_placement_engine()
-    versioning_api.version_control(placement_engine, repository, None)
-    return versioning_api.upgrade(
-        db_api.get_placement_engine(), repository, None)
+    try:
+        versioning_api.version_control(placement_engine, repository, None)
+        return versioning_api.upgrade(
+            db_api.get_placement_engine(), repository, None)
+    except exceptions.DatabaseAlreadyControlledError as exc:
+        sys.stderr.write('database probably already synced: %s\n' % exc)
 
 
 if __name__ == '__main__':

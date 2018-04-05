@@ -30,7 +30,7 @@ posts called "Placement Container Playground", parts
 [4](https://anticdent.org/placement-container-playground-4.html),
 [5](https://anticdent.org/placement-container-playground-5.html),
 and a forthcoming
-[6](https://anticdent.org/placement-container-playground-5.html).
+[6](https://anticdent.org/placement-container-playground-6.html).
 
 If you take issue with anything here or have some suggestions or
 have anything to say, please create an [issue](/cdent/placement/issues).

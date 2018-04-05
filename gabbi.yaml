@@ -1,0 +1,24 @@
+
+defaults:
+    request_headers:
+        accept: application/json
+        content-type: application/json
+        x-auth-token: admin
+        openstack-api-version: placement latest
+
+tests:
+- name: check version
+  GET: /
+  response_strings:
+    - min_version
+
+- name: create rp
+  POST: /resource_providers
+  data:
+      name: brown cat
+
+- name: count rp
+  GET: /resource_providers
+  response_json_paths:
+      $.resource_providers.`len`: 1
+      $.resource_providers[0].name: brown cat

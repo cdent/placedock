@@ -26,6 +26,10 @@ spec:
         env:
         - name: DB_STRING
           value: postgresql+psycopg2://cdent@192.168.1.76/placement?client_encoding=utf8
+        - name: DB_SYNC
+          value: "True"
+        - name: AUTH_STRATEGY
+          value: noauth2
         ports:
         - containerPort: 80
         # We must set resources for scaling to work.

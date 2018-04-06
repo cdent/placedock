@@ -149,7 +149,8 @@ something like this:
 
 ```
 <Proxy balancer://placement>
-    BalancerMember http://127.0.0.1:8080
+    # This placement is important
+    BalancerMember http://127.0.0.1:8080/placement
 </Proxy>
   
 ProxyPass "/placement" balancer://placement

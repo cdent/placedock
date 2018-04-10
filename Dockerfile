@@ -28,7 +28,7 @@ RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
         refs/changes/66/362766/85 \
         refs/changes/35/541435/27 \
         refs/changes/57/553857/10 \
-        refs/changes/62/543262/12 && \
+        refs/changes/62/543262/13 && \
     git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \
     pip3 install --no-deps .

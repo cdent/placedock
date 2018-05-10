@@ -100,7 +100,11 @@ run` or however you happen to be establishing a pod in kubernetes
 * `AUTH_STRATEGY`: Either `keystone` or `noauth2`. No default, if
   this is not set, the container will fail to start.
 
-If the `AUTH_STRATEGY` is `keystone` then additional configuration
+If the `AUTH_STRATEGY` is `noauth2`, HTTP requests to placement must
+include a header named `x-auth-token` with a value of `admin` in order
+to be authentic.
+
+If the `AUTH_STRATEGY` is `keystone`, additional configuration
 is needed so middleware knows how to talk to a keystone service:
 
 * `AUTH_USERNAME`: The username
@@ -110,9 +114,9 @@ is needed so middleware knows how to talk to a keystone service:
   list thereof, of memcached servers. This is required or otherwise
   the keystone middleware really drags.
 
-When using `noauth2` none of the above is required. Instead if an
-`x-auth-token` headers is present with a value of `admin` a request
-will be accepted as having the `admin` role.
+When using keystone, HTTP requests to placement must include a header named
+`x-auth-token` with a value of a valid keystone token that has the `admin`
+role.
 
 # Devstack
 

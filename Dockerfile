@@ -27,7 +27,7 @@ RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
     git fetch --depth=2 --append origin \
         refs/changes/66/362766/98 \
         refs/changes/35/541435/40 \
-        refs/changes/57/553857/25 \
+        refs/changes/57/553857/26 \
         refs/changes/62/543262/20 && \
     git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \

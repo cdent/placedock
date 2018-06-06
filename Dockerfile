@@ -6,7 +6,7 @@ RUN apk add --no-cache python3 python3-dev py3-pip git gcc uwsgi-python3 py3-psy
 # "accidental" imports
 # Used by:
 # netifaces: oslo_utils
-# greenlet: oslo_service (which is really only used for managing debug options)
+# greenlet: oslo_versionedobjects requires oslo.messaging requires oslo.service
 # cryptopgraphy: castellan, coming in via nova.conf
 RUN apk add --no-cache py3-netifaces py3-greenlet py-cryptography
 
@@ -25,9 +25,9 @@ RUN pip3 install -r placement-requirements.txt
 RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
     cd nova && \
     git fetch --depth=2 --append origin \
-        refs/changes/66/362766/100 \
-        refs/changes/35/541435/42 \
-        refs/changes/57/553857/29 \
+        refs/changes/66/362766/101 \
+        refs/changes/35/541435/43 \
+        refs/changes/57/553857/30 \
         refs/changes/62/543262/22 && \
     git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \

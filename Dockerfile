@@ -25,9 +25,9 @@ RUN pip3 install -r placement-requirements.txt
 RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
     cd nova && \
     git fetch --depth=2 --append origin \
-        refs/changes/66/362766/103 \
-        refs/changes/35/541435/45 \
-        refs/changes/57/553857/32 \
+        refs/changes/66/362766/104 \
+        refs/changes/35/541435/46 \
+        refs/changes/57/553857/33 \
         refs/changes/62/543262/23 && \
     git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \

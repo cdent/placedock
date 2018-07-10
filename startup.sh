@@ -1,6 +1,8 @@
 # This is automatically run as a shell script because of the
 # way startup is done in the Dockerfile.
 
+set -e
+
 DB_STRING=${DB_STRING:-sqlite:////cats.db}
 DB_SYNC=${DB_SYNC:-False}
 AUTH_STRATEGY=${AUTH_STRATEGY:?AUTH_STRATEGY required}

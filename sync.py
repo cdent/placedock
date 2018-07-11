@@ -9,6 +9,7 @@ from migrate.versioning.repository import Repository
 from nova.api.openstack.placement import wsgi
 from nova.api.openstack.placement import db_api
 from nova import conf
+from nova.db.sqlalchemy import api_models
 
 
 # This needs to be updated to as new placement
@@ -22,6 +23,22 @@ PLACEMENT_MIGRATIONS = [
     '044_placement_add_projects_users.py',
     '051_nested_resource_providers.py',
     '059_add_consumer_generation.py',
+]
+
+
+# The current tables used by placement
+PLACEMENT_TABLES = [
+    api_models.ResourceClass.__table__,
+    api_models.ResourceProvider.__table__,
+    api_models.ResourceProviderAggregate.__table__,
+    api_models.PlacementAggregate.__table__,
+    api_models.Inventory.__table__,
+    api_models.Allocation.__table__,
+    api_models.Trait.__table__,
+    api_models.ResourceProviderTrait.__table__,
+    api_models.Project.__table__,
+    api_models.User.__table__,
+    api_models.Consumer.__table__,
 ]
 
 
@@ -48,7 +65,20 @@ def _migration():
         sys.stderr.write('database probably already synced: %s\n' % exc)
 
 
+def _create():
+    """Create the placement tables fresh and new."""
+    base = api_models.API_BASE
+    engine = db_api.get_placement_engine()
+    base.metadata.create_all(engine, tables=PLACEMENT_TABLES)
+    sys.stderr.write('Created placement tables fresh\n')
+
+
 if __name__ == '__main__':
     wsgi._parse_args(sys.argv, default_config_files=[])
     db_api.configure(conf.CONF)
-    _migration()
+    if os.environ.get('DB_CLEAN') == 'True':
+        sys.stderr.write('creating database\n')
+        _create()
+    else:
+        sys.stderr.write('migrating database\n')
+        _migration()

@@ -24,9 +24,11 @@ RUN pip3 install -r placement-requirements.txt
 # https://github.com/python/cpython/pull/4267
 RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
     cd nova && \
-    git fetch --depth=2 --append origin \
-        refs/changes/62/543262/30 && \
-    git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
+    # If any patches need to be merged in, list them in this section
+    # below and uncomment it.
+    # git fetch --depth=2 --append origin \
+    #    refs/changes/62/543262/30 && \
+    # git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \
     pip3 install --no-deps .
 

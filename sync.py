@@ -6,10 +6,10 @@ from migrate import exceptions
 from migrate.versioning import api as versioning_api
 from migrate.versioning.repository import Repository
 
-from nova.api.openstack.placement import wsgi
-from nova.api.openstack.placement import db_api
-from nova import conf
-from nova.db.sqlalchemy import api_models
+from placement import wsgi
+from placement import db_api
+from placement import conf
+from placement.db.sqlalchemy import api_models
 
 
 # This needs to be updated to as new placement
@@ -43,7 +43,7 @@ PLACEMENT_TABLES = [
 
 
 def _migration():
-    # hack to the path of nova/db/sqlalchemy/migrate_repo/
+    # hack to the path of placement/db/sqlalchemy/migrate_repo/
     rel_path = os.path.join('..', 'db', 'sqlalchemy', 'api_migrations',
                             'migrate_repo')
     path = os.path.join(os.path.abspath(os.path.dirname(conf.__file__)),

@@ -7,35 +7,30 @@ RUN apk add --no-cache python3 python3-dev py3-pip git gcc uwsgi-python3 py3-psy
 # Used by:
 # netifaces: oslo_utils
 # greenlet: oslo_versionedobjects requires oslo.messaging requires oslo.service
-# cryptopgraphy: castellan, coming in via nova.conf
-RUN apk add --no-cache py3-netifaces py3-greenlet py-cryptography
+RUN apk add --no-cache py3-netifaces py3-greenlet
 
 # Work around git wanting to know
 RUN git config --global user.email "cdent@anticdent.org" && \
     git config --global user.name "Chris Dent"
 
-# Use a custom requirements file with minimal requirements.
-ADD placement-requirements.txt /
-RUN pip3 install -r placement-requirements.txt
-
-# Do this all in one big piece otherwise the nova bits are out of date
+# Do this all in one big piece otherwise things get confused.
 # Thanks to ingy for figuring out a faster way to do this.
-# We must get rid of a symlink which can lead to errors, see:
+# We must get rid of any symlinks which can lead to errors, see:
 # https://github.com/python/cpython/pull/4267
-RUN git clone --depth=1 https://git.openstack.org/openstack/nova && \
-    cd nova && \
+RUN git clone --depth=1 https://git.openstack.org/openstack/placement && \
+    cd placement && \
     # If any patches need to be merged in, list them in this section
     # below and uncomment it.
-    # git fetch --depth=2 --append origin \
-    #    refs/changes/62/543262/30 && \
-    # git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
+    git fetch --depth=2 --append origin \
+        refs/changes/57/600157/2 && \
+    git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \
-    pip3 install --no-deps .
+    pip3 install .
 
 
-# add the nova.conf template
-RUN mkdir /etc/nova
-ADD /shared/etc/nova/nova.conf /etc/nova/nova.conf.tmp
+# add the placement.conf template
+RUN mkdir /etc/placement
+ADD /shared/etc/placement/placement.conf /etc/placement/placement.conf.tmp
 
 # add the tools for creating the placement db
 ADD sync.py /

@@ -19,13 +19,13 @@ spec:
     spec:
       containers:
       - name: placement
-        image: placedock:1.0
+        image: cdent/placedock:latest
 # Change this value if you want to use a different database connection
 # string for the placement database. Otherwise it will default to a
 # sqlite3 database within the container.
         env:
-        - name: DB_STRING
-          value: postgresql+psycopg2://cdent@192.168.1.76/placement?client_encoding=utf8
+        #- name: DB_STRING
+        #  value: postgresql+psycopg2://cdent@192.168.1.76/placement?client_encoding=utf8
         - name: DB_SYNC
           value: "True"
         - name: AUTH_STRATEGY

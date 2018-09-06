@@ -47,11 +47,10 @@ The core pieces of this puzzle are:
   the placement service under
   [uwsgi](https://uwsgi-docs.readthedocs.io/) using the `http`
   protocol, exposed over port 80. Copied into the container.
-* `shared/etc/nova/nova.conf`: bare minimum configuration file
-  (named `nova` while placement is still a part of that) with some
-  values as template variables. Copied into the container.
+* `shared/etc/placement/placement.conf`: bare minimum configuration file
+  with some values as template variables. Copied into the container.
 * `startup.sh`: A script that runs when the container starts to
-  satisfy the templated vars in nova.conf, optionally sync the
+  satisfy the templated vars in placement.conf, optionally sync the
   database, and start the uwsgi server. Copied into the container.
 * `sync.py`: A python script that runs the database migrations
   for the tables used by placement. Copied into the container.
@@ -119,6 +118,9 @@ When using keystone, HTTP requests to placement must include a header named
 role.
 
 # Devstack
+
+**Note: This section is out of date while placement moves to its
+own repository.**
 
 If you want to use this setup with devstack, build a devstack (with
 nova and placement enabled, they are by default) and gather some

@@ -20,10 +20,10 @@ sed -e "s,{DB_STRING},$DB_STRING," \
     -e "s,{AUTH_PASSWORD},$AUTH_PASSWORD," \
     -e "s,{AUTH_USERNAME},$AUTH_USERNAME," \
     -e "s,{AUTH_URL},$AUTH_URL," \
-    < /etc/nova/nova.conf.tmp > /etc/nova/nova.conf
+    < /etc/placement/placement.conf.tmp > /etc/placement/placement.conf
 
 # establish the database, only if we've been asked to do so.
-[ "$DB_SYNC" = "True" ] && python3 /sync.py --config-file /etc/nova/nova.conf
+[ "$DB_SYNC" = "True" ] && python3 /sync.py --config-file /etc/placement/placement.conf
 
 # run the web server
 /usr/sbin/uwsgi --ini /placement-uwsgi.ini

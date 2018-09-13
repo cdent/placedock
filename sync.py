@@ -19,8 +19,8 @@ PLACEMENT_MIGRATIONS = [
     '026_add_resource_classes.py',
     '029_placement_aggregates.py',
     '041_resource_provider_traits.py',
-    '043_placement_consumers.py',
-    '044_placement_add_projects_users.py',
+    '043_consumers.py',
+    '044_add_projects_users.py',
     '051_nested_resource_providers.py',
     '059_add_consumer_generation.py',
 ]

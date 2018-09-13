@@ -22,7 +22,7 @@ RUN git clone --depth=1 https://git.openstack.org/openstack/placement && \
     # If any patches need to be merged in, list them in this section
     # below and uncomment it.
     git fetch --depth=2 --append origin \
-        refs/changes/57/600157/6 && \
+        refs/changes/57/600157/7 && \
     git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \
     pip3 install .

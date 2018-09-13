@@ -17,7 +17,7 @@ from placement.db.sqlalchemy import api_models
 PLACEMENT_MIGRATIONS = [
     '016_resource_providers.py',
     '026_add_resource_classes.py',
-    '029_placement_aggregates.py',
+    '029_aggregates.py',
     '041_resource_provider_traits.py',
     '043_consumers.py',
     '044_add_projects_users.py',

@@ -1,4 +1,4 @@
-FROM    alpine:edge
+FROM    alpine
 MAINTAINER Chris Dent <cdent@anticdent.org>
 
 RUN apk add --no-cache python3 python3-dev py3-pip git gcc uwsgi-python3 py3-psycopg2
@@ -25,15 +25,16 @@ RUN git clone --depth=1 https://git.openstack.org/openstack/placement && \
     #     refs/changes/57/600157/8 && \
     # git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \
-    pip3 install .
+    pip3 install . && \
+    # 6.7.0 provides the "from the environment" support
+    pip3 install 'oslo.config>=6.7.0'
 
 
 # add the placement.conf template
 RUN mkdir /etc/placement
-ADD /shared/etc/placement/placement.conf /etc/placement/placement.conf.tmp
-
-# add the tools for creating the placement db
-ADD sync.py /
+# ADD /shared/etc/placement/placement.conf /etc/placement/placement.conf
+# We need at least an empty conf file: https://bugs.launchpad.net/nova/+bug/1802925
+RUN touch /etc/placement/placement.conf
 
 # add in the uwsgi configuration
 ADD /shared/placement-uwsgi.ini /

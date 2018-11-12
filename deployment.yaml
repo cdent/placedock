@@ -19,16 +19,21 @@ spec:
     spec:
       containers:
       - name: placement
-        image: cdent/placedock:latest
+        image: cdent/placedock:cd_oslo.config.6.7.0
+        #imagePullPolicy: Never
 # Change this value if you want to use a different database connection
 # string for the placement database. Otherwise it will default to a
 # sqlite3 database within the container.
         env:
-        #- name: DB_STRING
+        #- name: OS_PLACEMENT_DATABASE__CONNECTION
         #  value: postgresql+psycopg2://cdent@192.168.1.76/placement?client_encoding=utf8
+        - name: OS_DEFAULT__DEBUG
+          value: "True"
+        - name: OS_PLACEMENT_DATABASE__CONNECTION
+          value: sqlite:////cats.db
         - name: DB_SYNC
           value: "True"
-        - name: AUTH_STRATEGY
+        - name: OS_API__AUTH_STRATEGY
           value: noauth2
         ports:
         - containerPort: 80

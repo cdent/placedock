@@ -1,7 +1,7 @@
 #!/bin/sh -ex
 
 eval `minikube docker-env`
-docker build -t placedock:1.0 .
+docker build -t placetest .
 # create the metrics service. create seems to be required
 # here, not yet sure why, so we || true to avoid errors
 # when we start again.
@@ -13,6 +13,8 @@ kubectl apply -f autoscaler.yaml
 kubectl expose deployment placement-deployment --type=LoadBalancer
 PLACEMENT=`minikube service placement-deployment --url`
 
+# wait a bit before asking so db sync can happen
+sleep 5
 curl -H 'x-auth-token: admin' $PLACEMENT 
 echo
 

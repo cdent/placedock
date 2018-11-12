@@ -63,7 +63,7 @@ database (depending on your environment you may need sudo):
 docker build -t placedock:1.0 .
 docker run -t -p 127.0.0.1:8081:80 \
     -e "DB_SYNC=True" \
-    -e "AUTH_STRATEGY=noauth2" \
+    -e "OS_API__AUTH_STRATEGY=noauth2" \
     placedock:1.0
 curl http://localhost:8081/ | json_pp
 ```
@@ -92,26 +92,26 @@ running the container (either via `-e` or `--env-file` on a `docker
 run` or however you happen to be establishing a pod in kubernetes
 (this report uses a `deployment.yaml`).
 
-* `DB_STRING`: Database connection string. Defaults to
-  `sqlite:////cats.db`, a database local to the container.
+* `OS_PLACEMENT_DATABASE__CONNECTION`: Database connection string.
+  Defaults to `sqlite:////cats.db`, a database local to the container.
 * `DB_SYNC`: If `True` then do database migrations. Defaults to
   `False.
-* `AUTH_STRATEGY`: Either `keystone` or `noauth2`. No default, if
+* `OS_API__AUTH_STRATEGY`: Either `keystone` or `noauth2`. No default, if
   this is not set, the container will fail to start.
 
-If the `AUTH_STRATEGY` is `noauth2`, HTTP requests to placement must
-include a header named `x-auth-token` with a value of `admin` in order
-to be authentic.
+If the `OS_API__AUTH_STRATEGY` is `noauth2`, HTTP requests to placement must
+include a header named `x-auth-token` with a value of `admin` in order to be
+authentic.
 
-If the `AUTH_STRATEGY` is `keystone`, additional configuration
+If the `OS_API__AUTH_STRATEGY` is `keystone`, additional configuration
 is needed so middleware knows how to talk to a keystone service:
 
-* `AUTH_USERNAME`: The username
-* `AUTH_PASSWORD`: and password for talking to keystone.
-* `AUTH_URL`: The URL where keystone is.
-* `MEMCACHED_SERVERS`: A `host:port` combo, or a comma-separated
-  list thereof, of memcached servers. This is required or otherwise
-  the keystone middleware really drags.
+* `OS_KEYSTONE_AUTHTOKEN__USERNAME`: The username
+* `OS_KEYSTONE_AUTHTOKEN__PASSWORD`: and password for talking to keystone.
+* `OS_KEYSTONE_AUTHTOKEN__WWW_AUTHENTICATE_URI`: The URL where keystone is.
+* `OS_KEYSTONE_AUTHTOKEN__MEMCACHED_SERVERS`: A `host:port` combo, or a
+  comma-separated list thereof, of memcached servers. This is required or
+  otherwise the keystone middleware really drags.
 
 When using keystone, HTTP requests to placement must include a header named
 `x-auth-token` with a value of a valid keystone token that has the `admin`
@@ -127,24 +127,25 @@ nova and placement enabled, they are by default) and gather some
 information from the built stack:
 
 * Use the value of `[api_database]/connection` in
-  `/etc/nova/nova.conf` as `DB_STRING`.
+  `/etc/nova/nova.conf` as `OS_PLACEMENT_DATABASE__CONNECTION`.
 * Use the value of `ADMIN_PASSWORD` in `local.conf` as
-  `AUTH_PASSWORD`.
-* Use `nova` for `AUTH_USER`.
-* The value for `AUTH_URL` is printed when `stack.sh` completes:
+  `OS_KEYSTONE_AUTHTOKEN__PASSWORD`.
+* Use `nova` for `OS_KEYSTONE_AUTHTOKEN__USER`.
+* The value for `OS_KEYSTONE_AUTHTOKEN__WWW_AUTHENTICATE+URI` is printed
+  when `stack.sh` completes:
   "Keystone is serving at http://192.168.1.76/identity/"
-* The value for `MEMCACHED_SERVERS` can be copied from
+* The value for `OS_KEYSTONE_AUTHTOKEN__MEMCACHED_SERVERS` can be copied from
   `[keystone_authtoken]/memcached_servers` in `/etc/nova/nova.conf`.
 
 You can put these in a `--env-file` that might look like this:
 
 ```
-AUTH_STRATEGY=keystone
-DB_STRING=mysql+pymysql://root:secret@192.168.1.76/nova_api?charset=utf8
-MEMCACHED_SERVERS=192.168.1.76:11211
-AUTH_URL=http://192.168.1.76/identity
-AUTH_PASSWORD=secret
-AUTH_USERNAME=nova
+OS_API__AUTH_STRATEGY=keystone
+OS_PLACEMENT_DATABASE__CONNECTION=mysql+pymysql://root:secret@192.168.1.76/nova_api?charset=utf8
+OS_KEYSTONE_AUTHTOKEN__MEMCACHED_SERVERS=192.168.1.76:11211
+OS_KEYSTONE_AUTHTOKEN__WWW_AUTHENTICATE_URI=http://192.168.1.76/identity
+OS_KEYSTONE_AUTHTOKEN__PASSWORD=secret
+OS_KEYSTONE_AUTHTOKEN__USERNAME=nova
 ```
 
 Clearly a lot of this could be automated, but I haven't got there
@@ -181,9 +182,9 @@ You can also the placement container with Kubernetes. There's a
 `bootstrap.sh` that will do everything for you if you follow some
 prerequisites:
 
-* Adjust `deployment.yaml` to set the `DB_STRING` and set any of the
-  environment variables described above. What's in there now is for
-  doing placement explorations with no auth and with an external
+* Adjust `deployment.yaml` to set the `OS_PLACEMENT_DATBASE__CONNECTION`
+  and set any of the environment variables described above. What's in there
+  now is for doing placement explorations with no auth and with an external
   postgresql database that is automatically synced at container run
   time. If you want to run placement-in-kubernetes alongside the
   rest of OpenStack read the Devstack section (above) for details on

@@ -1,7 +1,7 @@
 FROM    alpine
 MAINTAINER Chris Dent <cdent@anticdent.org>
 
-RUN apk add --no-cache python3 python3-dev py3-pip git gcc uwsgi-python3 py3-psycopg2
+RUN apk add --no-cache python3 python3-dev py3-pip git gcc uwsgi-python3 py3-psycopg2 py3-cffi
 # The following are required by pymsql, installed below, because alpine is
 # currently testing their py3 version of the package.
 RUN apk add --no-cache musl-dev libffi-dev openssl-dev
@@ -12,10 +12,8 @@ RUN apk add --no-cache musl-dev libffi-dev openssl-dev
 # greenlet: oslo_versionedobjects requires oslo.messaging requires oslo.service
 RUN apk add --no-cache py3-netifaces py3-greenlet
 
-# Work around git wanting to know
-RUN git config --global user.email "cdent@anticdent.org" && \
-    git config --global user.name "Chris Dent"
-
+# We need recent pip for requirements files to be read well.
+RUN pip3 install -U pip
 # Do this all in one big piece otherwise things get confused.
 # Thanks to ingy for figuring out a faster way to do this.
 # We must get rid of any symlinks which can lead to errors, see:

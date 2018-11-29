@@ -1,5 +1,4 @@
-# This is automatically run as a shell script because of the
-# way startup is done in the Dockerfile.
+#!/bin/sh
 
 set -e
 set -a

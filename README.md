@@ -99,14 +99,26 @@ include a header named `x-auth-token` with a value of `admin` in order to be
 authentic.
 
 If the `OS_API__AUTH_STRATEGY` is `keystone`, additional configuration
-is needed so middleware knows how to talk to a keystone service:
+is needed so middleware knows how to talk to a keystone service. This
+description uses the `password` auth type. If you are using something
+different the options will be different.
 
 * `OS_KEYSTONE_AUTHTOKEN__USERNAME`: The username
 * `OS_KEYSTONE_AUTHTOKEN__PASSWORD`: and password for talking to keystone.
-* `OS_KEYSTONE_AUTHTOKEN__WWW_AUTHENTICATE_URI`: The URL where keystone is.
+* `OS_KEYSTONE_AUTHTOKEN__WWW_AUTHENTICATE_URI`: The URL where keystone is,
+  used in the `www-authenticate` header.
 * `OS_KEYSTONE_AUTHTOKEN__MEMCACHED_SERVERS`: A `host:port` combo, or a
   comma-separated list thereof, of memcached servers. This is required or
   otherwise the keystone middleware really drags.
+* `OS_KEYSTONE_AUTHTOKEN__AUTH_TYPE`: Set to `password` to use usernames and
+  password with keystone.
+* `OS_KEYSTONE_AUTHTOKEN__AUTH_URL`: The URL placement verifies tokens with,
+  often the same as `www_authenticate_uri`.
+* `OS_KEYSTONE_AUTHTOKEN__PROJECT_DOMAIN_NAME`
+* `OS_KEYSTONE_AUTHTOKEN__PROJECT_NAME`
+* `OS_KEYSTONE_AUTHTOKEN__USER_DOMAIN_NAME`
+* `OS_KEYSTONE_AUTHTOKEN__USERNAME`
+* `OS_KEYSTONE_AUTHTOKEN__PASSWORD`
 
 When using keystone, HTTP requests to placement must include a header named
 `x-auth-token` with a value of a valid keystone token that has the `admin`
@@ -120,24 +132,32 @@ information from the built stack:
 
 * Use the value of `[placement_database]/connection` in
   `/etc/placement/placement.conf` as `OS_PLACEMENT_DATABASE__CONNECTION`.
+  You will probably need to change the IP address.
 * Use the value of `ADMIN_PASSWORD` in `local.conf` as
   `OS_KEYSTONE_AUTHTOKEN__PASSWORD`.
 * Use `placement` for `OS_KEYSTONE_AUTHTOKEN__USER`.
 * The value for `OS_KEYSTONE_AUTHTOKEN__WWW_AUTHENTICATE_URI` is printed
   when `stack.sh` completes:
   "Keystone is serving at http://192.168.1.76/identity/"
-* The value for `OS_KEYSTONE_AUTHTOKEN__MEMCACHED_SERVERS` can be copied from
-  `[keystone_authtoken]/memcached_servers` in `/etc/nova/nova.conf`.
+* The value for `OS_KEYSTONE_AUTHTOKEN__MEMCACHED_SERVERS` and the several
+  other settings can be extracted from the `[keystone_authtoken]` section of
+  `/etc/placement/placement.conf`.
 
 You can put these in a `--env-file` that might look like this:
 
 ```
-OS_API__AUTH_STRATEGY=keystone
+OS_DEFAULT__DEBUG=True
 OS_PLACEMENT_DATABASE__CONNECTION=mysql+pymysql://root:secret@192.168.1.76/placement?charset=utf8
-OS_KEYSTONE_AUTHTOKEN__MEMCACHED_SERVERS=192.168.1.76:11211
+OS_API__AUTH_STRATEGY=keystone
 OS_KEYSTONE_AUTHTOKEN__WWW_AUTHENTICATE_URI=http://192.168.1.76/identity
+OS_KEYSTONE_AUTHTOKEN__MEMCACHED_SERVERS=localhost:11211
+OS_KEYSTONE_AUTHTOKEN__PROJECT_DOMAIN_NAME=Default
+OS_KEYSTONE_AUTHTOKEN__PROJECT_NAME=service
+OS_KEYSTONE_AUTHTOKEN__USER_DOMAIN_NAME=Default
 OS_KEYSTONE_AUTHTOKEN__PASSWORD=secret
-OS_KEYSTONE_AUTHTOKEN__USERNAME=nova
+OS_KEYSTONE_AUTHTOKEN__USERNAME=placement
+OS_KEYSTONE_AUTHTOKEN__AUTH_URL=http://192.168.1.76/identity
+OS_KEYSTONE_AUTHTOKEN__AUTH_TYPE=password
 ```
 
 Clearly a lot of this could be automated, but I haven't got there

@@ -1,7 +1,10 @@
-FROM    alpine:edge
+FROM    alpine
 MAINTAINER Chris Dent <cdent@anticdent.org>
 
 RUN apk add --no-cache python3 python3-dev py3-pip git gcc uwsgi-python3 py3-psycopg2
+# The following are required by pymsql, installed below, because alpine is
+# currently testing their py3 version of the package.
+RUN apk add --no-cache musl-dev libffi-dev openssl-dev
 # the following are not directly used by placement but are needed by
 # "accidental" imports
 # Used by:
@@ -26,14 +29,8 @@ RUN git clone --depth=1 https://git.openstack.org/openstack/placement && \
     # git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \
     pip3 install .
-
-
-# add the placement.conf template
-RUN mkdir /etc/placement
-ADD /shared/etc/placement/placement.conf /etc/placement/placement.conf.tmp
-
-# add the tools for creating the placement db
-ADD sync.py /
+# oslo.config 6.7.0 provides the "from the environment" support
+RUN pip3 install 'oslo.config>=6.7.0' pymysql python-memcached
 
 # add in the uwsgi configuration
 ADD /shared/placement-uwsgi.ini /
@@ -42,5 +39,5 @@ ADD /shared/placement-uwsgi.ini /
 # starts uwsgi.
 ADD startup.sh /
 
-CMD ["sh", "-c", "/startup.sh"]
+ENTRYPOINT ["/startup.sh"]
 EXPOSE 80

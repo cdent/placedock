@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
       - name: placement
-        image: cdent/placedock:cd_oslo.config.6.7.0
-        #imagePullPolicy: Never
+        image: placetest:latest
+        imagePullPolicy: Never
 # Change this value if you want to use a different database connection
 # string for the placement database. Otherwise it will default to a
 # sqlite3 database within the container.

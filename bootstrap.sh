@@ -1,7 +1,7 @@
 #!/bin/sh -ex
 
 eval `minikube docker-env`
-#docker build -t placetest .
+docker build -t placetest .
 # create the metrics service. create seems to be required
 # here, not yet sure why, so we || true to avoid errors
 # when we start again.

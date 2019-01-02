@@ -1,7 +1,7 @@
 FROM python:3-alpine
 MAINTAINER Chris Dent <cdent@anticdent.org>
 
-RUN apk add --no-cache git gcc musl-dev linux-headers postgresql-dev
+RUN apk add --no-cache git gcc musl-dev linux-headers postgresql-dev pcre-dev
 
 # Do this all in one big piece otherwise things get confused.
 # Thanks to ingy for figuring out a faster way to do this.

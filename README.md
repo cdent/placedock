@@ -14,12 +14,13 @@ including:
   providers and complex queries thereof).
 * Running in whatever fashion, but doing the work at startup to make
   sure that the target database has the proper tables.
-* Running in kubernetes with a horizontal pod autoscaler.
+* Running in kubernetes with a horizontal pod autoscaler, via a
+  helm-chart (included here).
 
-**For Experimental Use Only.** At this time the `Dockerfile` builds
-from master. This configuration is not regularly tested for
-production use, but is pretty standard. If you want to give it a go
-and it works for you, great, please let me know.
+**Warning:** At this time the `Dockerfile` builds from master. This
+configuration is not regularly tested for production use, but is
+pretty standard. If you want to give it a go and it works for you,
+great, please let me know.
 
 The work that created this is documented in a series of blog
 posts called "Placement Container Playground", parts
@@ -28,8 +29,10 @@ posts called "Placement Container Playground", parts
 [3](https://anticdent.org/placement-container-playground-3.html),
 [4](https://anticdent.org/placement-container-playground-4.html),
 [5](https://anticdent.org/placement-container-playground-5.html),
-and a forthcoming
-[6](https://anticdent.org/placement-container-playground-6.html).
+[6](https://anticdent.org/placement-container-playground-6.html),
+[7](https://anticdent.org/placement-container-playground-7.html),
+and
+[8](https://anticdent.org/placement-container-playground-8.html),
 
 If you take issue with anything here or have some suggestions or
 have anything to say, please create an [issue](/cdent/placement/issues).
@@ -46,13 +49,13 @@ The core pieces of this puzzle are:
   the placement service under
   [uwsgi](https://uwsgi-docs.readthedocs.io/) using the `http`
   protocol, exposed over port 80. Copied into the container.
-* `startup.sh`: A script that runs when the container starts to
-  satisfy the templated vars in placement.conf, optionally sync the
-  database, and start the uwsgi server. Copied into the container.
+* `shared/startup.sh`: A script that runs when the container starts to
+  manage some configuration defaults, optionally sync the database,
+  and start the uwsgi server. Copied into the container.
 
-This perhaps sounds like a lot, but with a checkout out of the repo
-it is possible to do just this to get a container running it's own
-database (depending on your environment you may need sudo):
+With a checkout out of the repo it is possible to do just this to get a
+container running it's own database (depending on your environment you
+may need sudo):
 
 ```
 docker build -t placedock .
@@ -69,9 +72,16 @@ Results in:
 {
    "versions" : [
       {
-         "max_version" : "1.30",
+         "min_version" : "1.0",
          "id" : "v1.0",
-         "min_version" : "1.0"
+         "status" : "CURRENT",
+         "max_version" : "1.30",
+         "links" : [
+            {
+               "href" : "",
+               "rel" : "self"
+            }
+         ]
       }
    ]
 }
@@ -84,8 +94,11 @@ database. When the container is terminated, the data goes.
 
 There are several environment variables that can be used when
 running the container (either via `-e` or `--env-file` on a `docker
-run` or however you happen to be establishing a pod in kubernetes
-(this repo uses a `deployment.yaml`).
+run` or however you happen to be establishing a pod in kubernetes.
+Some of the variables are specific to this methods, the rest (those
+starting with `OS_`) correspond to the placement configuration
+settings, all of which may be managed from the environment (removing
+the need for a config file).
 
 * `OS_PLACEMENT_DATABASE__CONNECTION`: Database connection string.
   Defaults to `sqlite:////cats.db`, a database local to the container.
@@ -190,40 +203,63 @@ balance against. (Left as an exercise for the reader.)
 
 # Kubernetes
 
-You can also the placement container with Kubernetes. There's a
-`bootstrap.sh` that will do everything for you if you follow some
-prerequisites:
+You can also run placement in Kubernetes. A helm chart is included
+in this repository that will do everything for you. You first need
+a working kubernetes cluster and to [install
+helm](https://docs.helm.sh/using_helm/#quickstart).
 
-* Adjust `deployment.yaml` to set the `OS_PLACEMENT_DATBASE__CONNECTION`
-  and set any of the environment variables described above. What's in there
-  now is for doing placement explorations with no auth and with an external
-  postgresql database that is automatically synced at container run
-  time. If you want to run placement-in-kubernetes alongside the
-  rest of OpenStack read the Devstack section (above) for details on
-  what you need to set.
-* Either be running
-  [minikube](https://github.com/kubernetes/minikube) or comment out
-  the minikube lines in `bootstrap.sh` and `cleanup.sh`.
-* If you are using someone's already established cluster, read all
-  the `*.yaml` files and the `boostrap.sh` closely to make sure you
-  don't try to do something you can't. For example `boostrap.sh`
-  will try to turn on a metrics service. This makes sense in
-  minikube but not elsewhere.
+Once that is done, inspect `placement-chart/values.yaml` to
+understand the options. Using the defaults given there a single
+replica of the the placement service will be created, using an
+internal-to-container database, and the noauth2 strategy. This is
+useful to see it working.
 
-Here's what `bootstrap.sh` does:
+Changing `replicaCount` to 0 will install a [Horizontal Pod
+Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+into the cluster. This will not work unless a [metrics
+server](https://github.com/kubernetes-incubator/metrics-server/tree/master/deploy)
+is installed in the cluster. On docker for mac a
+[workaround](https://stackoverflow.com/a/54106726) is required.
 
-* builds the container (as above)
-* creates a metrics apiservice (for use by the autoscaler)
-* creates a placement-deployment via `deployment.yaml`
-* watches over that deployment with an horizontal pod autoscaler
-  defined in `autoscaler.yaml`
-* exposes the deployment via a LoadBalancer
-* figures out the exposed URL of the deployment
-* does some curl and [gabbi](https://gabbi.readthedocs.org/) to make
-  sure things are working
+Setting `ingress.enabled` to `true` will add placement to an ingress
+service if one exists. If you need one [see the
+instructions](https://kubernetes.github.io/ingress-nginx/deploy/).
+
+To deploy the chart using the defaults do something like (feel free
+to choose a name you like):
+
+```
+helm install ./placement-chart --name=placement
+```
+
+If you want to install with the auto scaler and the ingress server
+turned on you can either edit values.yaml or set values from the
+command line:
+
+```
+helm install --set ingress.enabled=true \
+             --set replicaCount=0 \
+             ./placement-chart
+```
+
+The ingress server will be set up to dispatch based on an http host
+of `placement.local`. If you add an entry to `/etc/hosts` with that
+name and the ingress IP, you'll be able to reach placement with
+queries like:
+
+```
+curl -H 'x-auth-token: admin' http://placement.local/resource_providers
+```
+
+You can also do a quick test using
+[gabbi](https://pypi.org/p/gabbi):
+
+```
+gabbi-run http://placement.local -- gabbi.yaml
+```
 
 To exercise the auto scaler, it is important to understand the
-`resources` section of `deployment.yaml` and the `spec` section of
+`resources` section of `values.yaml` and the `spec` section of
 `autoscaler.yaml`. As written they say:
 
 * start with one replica that is allowed to use 1/4 of a CPU
@@ -236,8 +272,14 @@ autoscaling in action without requiring too much work.
 [Placement Container Playground
 5](https://anticdent.org/placement-container-playground-5.html)
 describes using `watch kubectl get hpa` to see resources and
-replicas change and `ab` to cause some load.
+replicas change and `ab` to cause some load. Since then a tool
+called [placeload](https://pypi.org/p/placeload) has been created
+which can also exercise a placement service.
 
-When you are done experimenting, `cleanup.sh` will clean things up a
-bit, but be aware that depending on your environment docker and
-minikube can leave around a lot of detritus.
+When you are done experimenting, helm allows you to clear away
+the placement service:
+
+```
+helm ls  # list the installed charts to get the name
+helm delete --purge <the name>
+```

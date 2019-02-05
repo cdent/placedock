@@ -1,4 +1,4 @@
-{{- if not .Values.replicaCount }}
+{{- if not (ge (int .Values.replicaCount) 1) }}
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:

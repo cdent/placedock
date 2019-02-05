@@ -7,7 +7,7 @@
 # It will only work if there is a metric server deployed.
 # On docker for mac workaround are required, see:
 # https://stackoverflow.com/a/54106726
-replicaCount: 0
+replicaCount: 1
 
 image:
   repository: cdent/placedock
@@ -15,6 +15,8 @@ image:
   pullPolicy: IfNotPresent
 
 placement:
+  # FIXME: There should be a lot more here for keystone and
+  # other settings.
   config:
     auth_strategy: noauth2
     database_connection: sqlite:////cats.db
@@ -33,11 +35,11 @@ service:
   type: LoadBalancer
   port: 8080
 
-# Ingress handling
+# Ingress handling. Set to enabled to true to turn it on.
 # If you're going to use ingress, you need an ingress service.
 # See: https://kubernetes.github.io/ingress-nginx/deploy/
 ingress:
-  enabled: true
+  enabled: false
   annotations: {}
   paths: 
     - /

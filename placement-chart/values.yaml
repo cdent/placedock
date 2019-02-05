@@ -1,0 +1,54 @@
+# Default values for placement-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Either set replica count to some number or make it 0.
+# If it is zero a horizontal auto scaler will try to turn on.
+# It will only work if there is a metric server deployed.
+# On docker for mac workaround are required, see:
+# https://stackoverflow.com/a/54106726
+replicaCount: 0
+
+image:
+  repository: cdent/placedock
+  tag: latest
+  pullPolicy: IfNotPresent
+
+placement:
+  config:
+    auth_strategy: noauth2
+    database_connection: sqlite:////cats.db
+    # String not bool!
+    db_sync: "True"
+    debug: "True"
+
+# How often to check if the container is alive (seconds)
+liveness:
+  delay: 10
+  period: 30
+
+service:
+  # Being a load balancer means that the port will be exposed
+  # by docker for mac (amongst other things).
+  type: LoadBalancer
+  port: 8080
+
+# Ingress handling
+# If you're going to use ingress, you need an ingress service.
+# See: https://kubernetes.github.io/ingress-nginx/deploy/
+ingress:
+  enabled: true
+  annotations: {}
+  paths: 
+    - /
+    - /placement
+  hosts:
+    - placement.local
+  tls: []
+
+# Resources Must be set in order to be able to use autoscaling
+#resources: {}
+resources:
+  requests:
+    # the docker machine is small, so don't consume too much of it
+    cpu: 250m

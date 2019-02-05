@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "placement-chart.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "placement-chart.name" . }}
+    helm.sh/chart: {{ include "placement-chart.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+{{- if .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "placement-chart.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "placement-chart.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+              httpHeaders:
+              - name: openstack-api-version
+                value: placement latest
+            initialDelaySeconds: {{ .Values.liveness.delay }}
+            periodSeconds: {{ .Values.liveness.period }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: OS_DEFAULT__DEBUG
+            value: "{{ .Values.placement.config.debug }}"
+          - name: OS_PLACEMENT_DATABASE__CONNECTION
+            value: {{ .Values.placement.config.database_connection }}
+          - name: OS_API__AUTH_STRATEGY
+            value: {{ .Values.placement.config.auth_strategy }}
+          - name: DB_SYNC
+            value: "{{ .Values.placement.config.db_sync }}"
+          # FIXME: Add keystoneauth settings here.

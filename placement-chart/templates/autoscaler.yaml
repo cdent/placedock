@@ -1,0 +1,14 @@
+{{- if not .Values.replicaCount }}
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "placement-chart.fullname" . }}
+spec:
+  maxReplicas: 10
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: {{ include "placement-chart.fullname" . }}
+  targetCPUUtilizationPercentage: 50
+{{- end }}

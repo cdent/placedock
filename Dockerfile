@@ -31,7 +31,7 @@ RUN rm -r /placement
 
 # copy in the startup script, which syncs the database and
 # starts uwsgi.
-ADD startup.sh /
+ADD /shared/startup.sh /
 
 ENTRYPOINT ["/startup.sh"]
 EXPOSE 80

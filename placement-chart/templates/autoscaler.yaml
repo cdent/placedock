@@ -1,13 +1,14 @@
+{{- if not (ge (int .Values.replicaCount) 1) }}
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: placement-lba
-  namespace: default
+  name: {{ include "placement-chart.fullname" . }}
 spec:
   maxReplicas: 10
   minReplicas: 1
   scaleTargetRef:
     apiVersion: extensions/v1beta1
     kind: Deployment
-    name: placement-deployment
+    name: {{ include "placement-chart.fullname" . }}
   targetCPUUtilizationPercentage: 50
+{{- end }}

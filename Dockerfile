@@ -1,7 +1,9 @@
-FROM python:3-alpine
+FROM python:3-alpine as build-env
 MAINTAINER Chris Dent <cdent@anticdent.org>
 
 RUN apk add --no-cache git gcc musl-dev linux-headers postgresql-dev pcre-dev
+
+RUN python -m venv /app
 
 # Do this all in one big piece otherwise things get confused.
 # Thanks to ingy for figuring out a faster way to do this.
@@ -15,19 +17,20 @@ RUN git clone --depth=1 https://git.openstack.org/openstack/placement && \
     #     refs/changes/57/600157/8 && \
     # git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \
-    pip --no-cache-dir install .
-RUN pip --no-cache-dir install uwsgi
+    /app/bin/pip --no-cache-dir install .
+RUN /app/bin/pip --no-cache-dir install uwsgi
 # Mysql (or psycopg2) and memcached needed in "production" settings.
-RUN pip --no-cache-dir install pymysql psycopg2 python-memcached
+RUN /app/bin/pip --no-cache-dir install pymysql psycopg2 python-memcached
+
+
+FROM python:3-alpine
+COPY --from=build-env /app /app
+
+# pcre and psql shared libs required
+RUN apk add --no-cache pcre libpq
 
 # add in the uwsgi configuration
 ADD /shared/placement-uwsgi.ini /
-
-# Remove stuff we no longer need. We'd like to remove terminfo here, but
-# it's required by the base image.
-RUN apk del --purge git gcc linux-headers
-# Remove the source, to save a (tiny) bit of space.
-RUN rm -r /placement
 
 # copy in the startup script, which syncs the database and
 # starts uwsgi.

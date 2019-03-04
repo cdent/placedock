@@ -60,7 +60,7 @@ may need sudo):
 ```
 docker build -t placedock .
 docker run -t -p 127.0.0.1:8081:80 \
-    -e "DB_SYNC=True" \
+    -e "OS_PLACEMENT_DATABASE__SYNC_ON_STARTUP=True" \
     -e "OS_API__AUTH_STRATEGY=noauth2" \
     placedock
 curl http://localhost:8081/ | json_pp
@@ -102,8 +102,8 @@ the need for a config file).
 
 * `OS_PLACEMENT_DATABASE__CONNECTION`: Database connection string.
   Defaults to `sqlite:////cats.db`, a database local to the container.
-* `DB_SYNC`: If `True` then do database migrations. Defaults to
-  `False.
+* `OS_PLACEMENT_DATABASE__SYNC_ON_STARTUP`: If `True` then do database
+   migrations. Defaults to `False.
 * `OS_API__AUTH_STRATEGY`: Either `keystone` or `noauth2`. No default, if
   this is not set, the container will fail to start.
 

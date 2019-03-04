@@ -47,6 +47,6 @@ spec:
             value: {{ .Values.placement.config.database_connection }}
           - name: OS_API__AUTH_STRATEGY
             value: {{ .Values.placement.config.auth_strategy }}
-          - name: DB_SYNC
+          - name: OS_PLACEMENT_DATABASE__SYNC_ON_STARTUP
             value: "{{ .Values.placement.config.db_sync }}"
           # FIXME: Add keystoneauth settings here.

@@ -22,6 +22,10 @@ RUN /app/bin/pip --no-cache-dir install uwsgi
 # Mysql (or psycopg2) and memcached needed in "production" settings.
 RUN /app/bin/pip --no-cache-dir install pymysql psycopg2 python-memcached
 
+# Remove Bable dat file to try to save some space. Will it make
+# everything break?
+RUN rm /app/lib/python3.*/site-packages/babel/locale-data/*.dat
+
 
 FROM python:3-alpine
 COPY --from=build-env /app /app

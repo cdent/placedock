@@ -5,10 +5,9 @@ RUN apk add --no-cache git gcc musl-dev linux-headers postgresql-dev pcre-dev
 
 RUN python -m venv /app
 
-RUN /app/bin/pip --no-cache-dir install  git+https://git.openstack.org/openstack/placement@stable/stein#egg=openstack-placement
-RUN /app/bin/pip --no-cache-dir install uwsgi
+RUN /app/bin/pip --no-cache-dir install openstack-placement
 # Mysql (or psycopg2) and memcached needed in "production" settings.
-RUN /app/bin/pip --no-cache-dir install pymysql psycopg2 python-memcached
+RUN /app/bin/pip --no-cache-dir install uwsgi pymysql psycopg2 python-memcached
 
 
 FROM python:3-alpine

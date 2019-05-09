@@ -24,7 +24,7 @@ great, please let me know.
 
 The work that created this is documented in a series of blog
 posts called "Placement Container Playground", parts
-[1](https://anticdent.org/placement-container-playground-1.html),
+[1](https://anticdent.org/placement-container-playground.html),
 [2](https://anticdent.org/placement-container-playground-2.html),
 [3](https://anticdent.org/placement-container-playground-3.html),
 [4](https://anticdent.org/placement-container-playground-4.html),

@@ -18,7 +18,7 @@ RUN git clone --depth=1 https://git.openstack.org/openstack/placement && \
     # git cherry-pick $(cut -f1 .git/FETCH_HEAD) && \
     find . -type l -exec rm {} \; && \
     /app/bin/pip --no-cache-dir install .
-RUN /app/bin/pip --no-cache-dir install uwsgi
+RUN /app/bin/pip --no-cache-dir install uwsgi werkzeug
 # Mysql (or psycopg2) and memcached needed in "production" settings.
 RUN /app/bin/pip --no-cache-dir install pymysql psycopg2 python-memcached
 

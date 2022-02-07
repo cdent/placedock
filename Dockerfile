@@ -1,7 +1,7 @@
 FROM python:3-alpine as build-env
 MAINTAINER Chris Dent <cdent@anticdent.org>
 
-RUN apk add --no-cache git gcc musl-dev linux-headers postgresql-dev pcre-dev
+RUN apk add --no-cache git gcc musl-dev linux-headers postgresql-dev pcre-dev libffi-dev
 
 RUN python -m venv /app
 
